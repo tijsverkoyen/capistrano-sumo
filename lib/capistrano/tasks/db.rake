@@ -24,6 +24,27 @@ namespace :sumo do
       end
     end
 
+    desc "Puts your local database to the remote server"
+    task :put do
+      on roles(:db) do
+        execute :mysqldump, "--lock-tables=false --set-charset #{remote_db_options} #{extract_from_remote_parameters('database.name')} > #{shared_path}/backup_#{Time.now.strftime('%Y%m%d%H%M')}.sql"
+      end
+
+      run_locally do
+        execute :mysqldump, "--lock-tables=false --set-charset #{extract_from_local_parameters('database.name')} > ./db_upload.tmp.sql"
+      end
+
+      on roles(:db) do
+        upload! File.open('./db_upload.tmp.sql'), "#{shared_path}/db_upload.tmp.sql"
+        execute :mysql, "#{remote_db_options} #{extract_from_remote_parameters('database.name')} < #{shared_path}/db_upload.tmp.sql"
+        execute :rm, "#{shared_path}/db_upload.tmp.sql"
+      end
+
+      run_locally do
+        execute :rm, './db_upload.tmp.sql'
+      end
+    end
+
     ## Some helper methods
     private
     def remote_db_options
