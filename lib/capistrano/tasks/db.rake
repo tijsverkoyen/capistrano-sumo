@@ -24,7 +24,7 @@ namespace :sumo do
       end
     end
 
-    desc "Puts your local database to the remote server"
+    desc "Replace the remote database with the local database"
     task :put do
       on roles(:db) do
         execute :mysqldump, "--lock-tables=false --set-charset #{remote_db_options} #{extract_from_remote_parameters('database.name')} > #{shared_path}/backup_#{Time.now.strftime('%Y%m%d%H%M')}.sql"
