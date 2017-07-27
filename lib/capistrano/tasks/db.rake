@@ -45,6 +45,26 @@ namespace :sumo do
       end
     end
 
+    desc "Replace the local database with the remote database"
+    task :get do
+      on roles(:db) do
+        execute :mysqldump, "--lock-tables=false --set-charset #{remote_db_options} #{extract_from_remote_parameters('database.name')} > #{shared_path}/db_download.tmp.sql"
+        download! "#{shared_path}/db_download.tmp.sql", './db_download.tmp.sql'
+      end
+
+      run_locally do
+        execute :mysql, extract_from_local_parameters('database.name'), "< ./db_download.tmp.sql"
+      end
+
+      on roles(:db) do
+        execute :rm, "#{shared_path}/db_download.tmp.sql"
+      end
+
+      run_locally do
+        execute :rm, './db_download.tmp.sql'
+      end
+    end
+
     ## Some helper methods
     private
     def remote_db_options
