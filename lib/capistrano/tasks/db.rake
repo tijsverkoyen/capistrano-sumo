@@ -1,9 +1,9 @@
 namespace :sumo do
   namespace :db do
-    desc "Create the database if it doesn't exists yet"
+    desc 'Create the database if it doesn\'t exists yet'
     task :create do
-      if fetch(:stage).to_s != "staging"
-        warn Airbrussh::Colors.red('✘') + " This task will only work on staging"
+      if fetch(:stage).to_s != 'staging'
+        warn Airbrussh::Colors.red('✘') + ' This task will only work on staging.'
         exit 1
       end
 
@@ -12,10 +12,10 @@ namespace :sumo do
       end
     end
 
-    desc "Get info about the database"
+    desc 'Get info about the database'
     task :info do
-      if fetch(:stage).to_s != "staging"
-        warn Airbrussh::Colors.red('✘') + " This task will only work on staging"
+      if fetch(:stage).to_s != 'staging'
+        warn Airbrussh::Colors.red('✘') + ' This task will only work on staging.'
         exit 1
       end
 
@@ -24,19 +24,31 @@ namespace :sumo do
       end
     end
 
-    desc "Replace the remote database with the local database"
+    desc 'Replace the remote database with the local database'
     task :put do
       on roles(:db) do
-        execute :mysqldump, "--lock-tables=false --set-charset #{remote_db_options} #{extract_from_remote_parameters('database.name')} > #{shared_path}/backup_#{Time.now.strftime('%Y%m%d%H%M')}.sql"
+        execute :mysqldump,
+                '--lock-tables=false',
+                '--set-charset',
+                remote_db_options,
+                extract_from_remote_parameters('database.name'),
+                "> #{shared_path}/backup_#{Time.now.strftime('%Y%m%d%H%M')}.sql"
       end
 
       run_locally do
-        execute :mysqldump, "--lock-tables=false --set-charset #{extract_from_local_parameters('database.name')} > ./db_upload.tmp.sql"
+        execute :mysqldump,
+                '--lock-tables=false',
+                '--set-charset',
+                extract_from_local_parameters('database.name'),
+                '> ./db_upload.tmp.sql'
       end
 
       on roles(:db) do
         upload! File.open('./db_upload.tmp.sql'), "#{shared_path}/db_upload.tmp.sql"
-        execute :mysql, "#{remote_db_options} #{extract_from_remote_parameters('database.name')} < #{shared_path}/db_upload.tmp.sql"
+        execute :mysql,
+                remote_db_options,
+                extract_from_remote_parameters('database.name'),
+                "< #{shared_path}/db_upload.tmp.sql"
         execute :rm, "#{shared_path}/db_upload.tmp.sql"
       end
 
@@ -45,15 +57,22 @@ namespace :sumo do
       end
     end
 
-    desc "Replace the local database with the remote database"
+    desc 'Replace the local database with the remote database'
     task :get do
       on roles(:db) do
-        execute :mysqldump, "--lock-tables=false --set-charset #{remote_db_options} #{extract_from_remote_parameters('database.name')} > #{shared_path}/db_download.tmp.sql"
+        execute :mysqldump,
+                '--lock-tables=false',
+                '--set-charset',
+                remote_db_options,
+                extract_from_remote_parameters('database.name'),
+                " > #{shared_path}/db_download.tmp.sql"
         download! "#{shared_path}/db_download.tmp.sql", './db_download.tmp.sql'
       end
 
       run_locally do
-        execute :mysql, extract_from_local_parameters('database.name'), "< ./db_download.tmp.sql"
+        execute :mysql,
+                extract_from_local_parameters('database.name'),
+                '< ./db_download.tmp.sql'
       end
 
       on roles(:db) do
@@ -69,9 +88,9 @@ namespace :sumo do
     private
     def remote_db_options
       data = {
-          'host' => extract_from_remote_parameters("database.host"),
-          'user' => extract_from_remote_parameters("database.user"),
-          'password' => extract_from_remote_parameters("database.password"),
+          'host' => extract_from_remote_parameters('database.host'),
+          'user' => extract_from_remote_parameters('database.user'),
+          'password' => extract_from_remote_parameters('database.password'),
       }
       options = ''
 

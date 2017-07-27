@@ -1,5 +1,5 @@
-require "bundler/setup"
-require "capistrano/sumo"
+require 'bundler/setup'
+require 'capistrano/sumo'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

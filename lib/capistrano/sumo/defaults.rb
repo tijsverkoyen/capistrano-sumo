@@ -1,6 +1,6 @@
-# Make sure the composer executable is installed
 namespace :deploy do
-  after :finished, "sumo:notifications:deploy"
+  # notify our bot about the deploy
+  after :finished, 'sumo:notifications:deploy'
 end
 
 # Load the tasks

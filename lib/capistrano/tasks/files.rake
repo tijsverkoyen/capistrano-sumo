@@ -1,6 +1,6 @@
 namespace :sumo do
   namespace :files do
-    desc "Uploads the local files to the remote server"
+    desc 'Uploads the local files to the remote server'
     task :put do
       on roles(:web) do
         fetch(:files_dir).each do |path|
@@ -9,7 +9,7 @@ namespace :sumo do
       end
     end
 
-    desc "Downloads the remote files to the local instance"
+    desc 'Downloads the remote files to the local instance'
     task :get do
       on roles(:web) do
         fetch(:files_dir).each do |path|
