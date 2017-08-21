@@ -16,6 +16,10 @@ namespace :sumo do
       on roles(:web) do
         path = "/src/Frontend/Themes/#{theme}/Core"
 
+        # delete old folder
+        execute :rm, '-rf', "#{current_path}#{path}"
+        execute :mkdir, '-p', "#{current_path}#{path}"
+
         # upload compiled theme
         upload! ".#{path}", "#{current_path}#{File.dirname(path)}", recursive: true
       end
