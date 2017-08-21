@@ -12,16 +12,15 @@ namespace :sumo do
     desc 'Uploads the build assets to the remote server'
     task :put do
       invoke 'sumo:assets:compile'
-
       on roles(:web) do
-        path = "/src/Frontend/Themes/#{theme}/Core"
+        remote_path = "#{release_path}/src/Frontend/Themes/#{theme}/Core"
 
         # delete old folder
-        execute :rm, '-rf', "#{current_path}#{path}"
-        execute :mkdir, '-p', "#{current_path}#{path}"
+        execute :rm, '-rf', remote_path
+        execute :mkdir, '-p', remote_path
 
         # upload compiled theme
-        upload! ".#{path}", "#{current_path}#{File.dirname(path)}", recursive: true
+        upload! "./src/Frontend/Themes/#{theme}/Core", "#{File.dirname(remote_path)}", recursive: true
       end
     end
 
