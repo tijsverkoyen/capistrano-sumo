@@ -12,6 +12,15 @@ namespace :sumo do
     desc 'Uploads the build assets to the remote server'
     task :put do
       invoke 'sumo:assets:compile'
+
+      on roles(:web) do
+        path = "/src/Frontend/Themes/#{theme}/Core"
+
+        # upload compiled theme
+        upload! ".#{path}", "#{current_path}#{File.dirname(path)}", recursive: true
+      end
+    end
+
     def theme
       package = JSON.parse(File.read('package.json'))
 
