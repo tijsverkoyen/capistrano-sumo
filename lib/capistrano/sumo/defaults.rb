@@ -1,4 +1,7 @@
 namespace :deploy do
+  # compile and upload the assets
+  after :updated, 'sumo:assets:put'
+
   # notify our bot about the deploy
   after :finished, 'sumo:notifications:deploy'
 end
