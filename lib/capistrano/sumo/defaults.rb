@@ -1,6 +1,10 @@
+require 'json'
+
 namespace :deploy do
-  # compile and upload the assets
-  after :updated, 'sumo:assets:put'
+  package = JSON.parse(File.read('composer.json'))
+
+  # compile and upload the assets, but only if it's a Fork CMS project
+  after :updated, 'sumo:assets:put' if package['name'] == 'forkcms/forkcms'
 
   # notify our bot about the deploy
   after :finished, 'sumo:notifications:deploy'
