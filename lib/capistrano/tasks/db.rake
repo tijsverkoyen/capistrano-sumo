@@ -90,8 +90,8 @@ namespace :sumo do
       data = {
           'host' => extract_from_remote_parameters('database.host'),
           'user' => extract_from_remote_parameters('database.user'),
-          'password' => extract_from_remote_parameters('database.password'),
-      }
+          'password' => extract_from_remote_parameters('database.password').gsub("$", "\\$"), # Escape the $ character in passwords
+       }
       options = ''
 
       data.each do |key, value|
