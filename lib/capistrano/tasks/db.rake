@@ -95,7 +95,7 @@ namespace :sumo do
       options = ''
 
       data.each do |key, value|
-        options << "--#{key}=#{value} " unless value.empty?
+        options << "--#{key}=\"#{value}\" " unless value.empty?
       end
       options
     end
