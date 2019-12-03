@@ -4,8 +4,8 @@ namespace :sumo do
     task :enable do
       on roles(:web) do
         execute :mkdir, '-p', "#{shared_path}/redirect"
-        execute :wget, '-qO', "#{shared_path}/redirect/index.php http://static.sumocoders.be/redirect/index.phps"
-        execute :wget, '-qO', "#{shared_path}/redirect/.htaccess http://static.sumocoders.be/redirect/htaccess"
+        execute :wget, '-qO', "#{shared_path}/redirect/index.php http://static.sumocoders.be/redirect2/index.phps"
+        execute :wget, '-qO', "#{shared_path}/redirect/.htaccess http://static.sumocoders.be/redirect2/htaccess"
         execute :sed, '-i', "'s|<real-url>|#{fetch :production_url}|' #{shared_path}/redirect/index.php"
         execute :rm, '-f', "#{fetch :deploy_to}/current"
         execute :ln, '-s', "#{shared_path}/redirect #{fetch :deploy_to}/current"
